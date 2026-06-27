@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "scripts": {
+    "start": "node simpleServer.js",
+    "dev": "node --watch simpleServer.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

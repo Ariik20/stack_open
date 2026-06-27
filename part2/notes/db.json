@@ -1,0 +1,86 @@
+{
+  "notes": [
+    {
+      "id": "1",
+      "content": "HTML is easy",
+      "important": true
+    },
+    {
+      "id": "2",
+      "content": "Browser can execute only JavaScript",
+      "important": false
+    },
+    {
+      "id": "3",
+      "content": "GET and POST are the most important methods of HTTP protocol",
+      "important": true
+    },
+    {
+      "id": "bea4",
+      "content": "React js is a library",
+      "important": true
+    },
+    {
+      "id": "7378",
+      "content": "React js is a library",
+      "important": false
+    },
+    {
+      "id": "af7b",
+      "content": "Learn Docker",
+      "important": false
+    },
+    {
+      "id": "a35c",
+      "content": "Learn GRAPHQL",
+      "important": false
+    },
+    {
+      "id": "f40d",
+      "content": "Learn FullStack ",
+      "important": false
+    },
+    {
+      "id": "ce26",
+      "content": "Get out of the mud",
+      "important": true
+    },
+    {
+      "id": "cd92",
+      "content": "Build a server",
+      "important": false
+    },
+    {
+      "id": "8086",
+      "content": "Get good at focus",
+      "important": true
+    },
+   
+    {
+      "id": "0cf8",
+      "content": "code a bit",
+      "important": false
+    },
+    {
+      "id": "2d98",
+      "content": "winston churchhill",
+      "important": false
+    },
+    {
+      "id": "e7a5",
+      "content": "Crazy boys",
+      "important": false
+    },
+    {
+      "id": "9456",
+      "content": "Celebrate",
+      "important": true
+    },
+    {
+      "id": "a1c3",
+      "content": "Hello man",
+      "important": false
+    }
+    
+  ]
+}

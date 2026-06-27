@@ -1,0 +1,830 @@
+// component helper functions- functions that are inside a component and are used to carryout specific logic ( it determines the component's behaviour!!)
+//  destructuring- extract individual values into variables  from objects and arrays so that we can easily use them -> we have 3 ways of destructuring
+
+// 🥷✅DYNAMIC NOT STATIC WEBPAGES!!
+// Page-rendering-> after the initial rendering,we can use stateful components to do that
+// re-render components = STATE
+// A state(variable) that changes or could change during the lifecycle of a component
+
+// NB: If any state(or any variable with in the component) changes, the component will re-render
+// Every time the setCounter modifies the state it causes the component to re-render
+
+//  --EVENT HANDLING--
+//  User interacting with different elements of the web page can cause a collection of various kinds to be triggered
+
+
+// 1st option
+let counter = 1;
+// normal rendering
+const root = ReactDOM.createRoot(document.getElementById("root"));
+// put it in a function
+const refresh = () => {
+  root.render(<App counter={counter} />);
+};
+// For the initial or the first time,value=1 , it re-renders 1st time
+refresh();
+// lets manually change the value of the counter variable, so now its changed
+counter += 1;
+// call the function to see the change in value of the counter variable,value=2, it re-renders 2nd time
+refresh();
+// have to manually change the counter variabl, so now its changed
+counter += 1;
+// call the function again so that we can see change in value of the counter variable, value=3, it re-renders 3rd time
+refresh();
+
+// 2nd option- since the code is in a synchronous format, the displays with have such a short amount of time, because after each function is call
+// once, the second function is also called sequentially
+// -lets take control of how we want our components to be re-render, so we will want the change of the  value or re-rendering to happen after every
+// second , so that we can have time to see the displays - lets use setInterval function
+setInterval(() => {
+  refresh();
+  counter += 1;
+}, 1000);
+// the setInterval function will loop continuously until we can specify to stop!!
+
+// Making repeated calls of the render function isnt necessarily the best way to re-render our components, best its manually and wont work for
+// if want to re-render or change the value of a certain variable many times!! - lets use state [React state hooks]
+// -A state is just a variable that will change its value during the lifecycle of the component- any variable that you know will change later on
+// should be considered as state
+
+// setCounter function cause the component to re-render every its called as long as the application runs
+// import { useState } from "react";
+
+// const App = () => {
+//   // so this is the variable whose value we want to change in the lifecycle of our component
+//   const [counter, setCounter] = useState(0);
+
+//   //  this is how we can control when to change/ how to change the value of the variable we want to change
+//   setTimeout(() => setCounter(counter + 1), 1000);
+
+//   return <div>{counter}</div>;
+// };
+
+// export default App;
+
+// sometime we want a state of a variable to change when the user has clicked or asked for something, since its applications that the user can interact with
+// Not just like the way we have been doing before- where we deliberately change the state of a variable on no grounds
+// So we will use event handlers-> event handlers like clicks can trigger change in certain parts of our components, event handlers can be clicks,etc
+
+const App = () => {
+  // this is our state
+  const [counter, setCounter] = useState(0);
+  // register an event handler function-> what we want to happen when an event handler is clicked
+  // this is what will be tricked when want a change of state
+  const handleClick = () => {
+    console.log("clicked");
+  };
+
+  return (
+    <div>
+      <div>{counter}</div>
+      {/* the event handler here is the button -> what we want the user to ask or click to do a certain thing on the web */}
+      <button onClick={handleClick}>plus</button>
+    </div>
+  );
+};
+// NB: Dont include the the handler functions in the JSX because it can become so complex
+// So define them outside as independent functions then pass them as values of the attributes on the element you what to trigger the function that you defined!!
+
+const App = () => {
+  const [counter, setCounter] = useState(0);
+
+  // 1st handler function that will increment the counter variable
+  const increaseByOne = () => setCounter(counter + 1);
+  // 2nd handler function that will reset the counter variable to zero(0)
+  const setToZero = () => setCounter(0);
+
+  return (
+    <div>
+      <div>{counter}</div>
+      {/* Now pass the 1st function in as the values of the atttributes of the button element*/}
+      <button onClick={increaseByOne}>plus</button>
+      {/* Now pass the 2nd function in as the values of the attributes of the button element */}
+      <button onClick={setToZero}>zero</button>
+    </div>
+  );
+};
+
+// Passing state to CHILD COMPONENTS
+3 Components - one Component for displaying counter,2 for button
+//  Here there is a concept called lifting up the state- where the state is put inside a shared common ancestor
+
+// componenet for counter
+const Display=(props)=>{
+  return (
+    // this will be passed down onto it as a state from the parent
+  <div>{props.counter}
+  </div>)
+}
+// component for button - It makes the component reusable- which we can use for many other things
+const Button=({title,whatToDo})=>{
+  // things its going to inherit from the parent
+  <button onClick={whatToDo}>{title}</button>
+}
+
+// representation of passing state to CHILD COMPONENTS
+const App = () => {
+  // state- lifted up(lift the state up)- shared common ancestor
+  // so that child components can use it
+  const [ counter, setCounter ] = useState(0)
+// This is 1st handler function- increase the variable by 1
+  const increaseByOne = () => setCounter(counter + 1)
+  // This is 2nd handler function- reset the variable to zero(0)
+  const setToZero = () => setCounter(0)
+
+  return (
+    <div>
+      {/* state is passed down to the child component called DISPLAY in this case */}
+      <Display counter={counter}/>
+      {/* handler function passed into the event handler-button */}
+      <button onClick={increaseByOne}>
+        plus
+      </button>
+      {/* handler function passed into the event handler-button */}
+      <button onClick={setToZero}> 
+        zero
+      </button>
+    </div>
+  )
+}
+
+// NB: When the state changes, the Whole component is re-rendered including its CHILDREN!!
+
+// 🥷✅Changes in state cause re-rendering
+// -When Application startTransition, the app is executed
+// LETS UNDERSTAND HOW THE APP WORKS!!
+const App = () => {
+  // The state- or variable that changes
+  const [counter, setCounter] = useState(0)
+// This message will be display on the browser console
+  console.log('rendering with counter value', counter)
+  // 1st handler function
+  const increaseByOne = () => {
+
+    console.log('increasing, value before', counter)
+    setCounter(counter + 1)
+  }
+// 2nd handler function that decreases the value by 1
+  const decreaseByOne = () => { 
+
+    console.log('decreasing, value before', counter)
+    setCounter(counter - 1)
+  }
+
+  // 3rd handler function to reset the value to zero(0)
+  const setToZero = () => {
+
+    console.log('resetting to zero, value before', counter)
+    setCounter(0)
+  }
+
+  return (
+    <div>
+      <Display counter={counter} />
+      <Button onClick={increaseByOne} text="plus" />
+      <Button onClick={setToZero} text="zero" />
+      <Button onClick={decreaseByOne} text="minus" />
+    </div>
+  )
+} 
+
+//🥷✅ DEVELOPER TIP: Do not ever try to guess what your code does.
+// It is just better to use CONSOLE.LOG and see with your own eyes what it does.
+// 1- First code what works, then later you can refactor your components the right way or the conventional REACT way
+
+// COMPLEX STATE!!- Many pieces of state or values or things that need to change their behaviours during the lifecycle of our app!!
+// - We can use multiple useState function to create multiple separate "pieces" of state
+
+// Example here- Creating 2 pieces of state - named Left, right
+const App = () => {
+  // first piece of state for left-> initialized to 0
+  const [left, setLeft] = useState(0)
+  // second piece of state for right-> initialized to 0
+  const [right, setRight] = useState(0)
+  return (
+    <div>
+      {left}
+      {/* Event handler for the left state */}
+      <button onClick={() => setLeft(left + 1)}>
+        left
+      </button>
+      {/* Even handler for the right state */}
+      <button onClick={() => setRight(right + 1)}>
+        right
+      </button>
+      {right}
+    </div>
+  )
+}
+
+// 🥷✅IMPLEMENTING MULTIPLE STATES INTO AN OBJECT -> which turns it into ONE single piece of state
+// We can also implement this functionality using an object- we can put multiple states into an object or one object like below
+const App = () => {  
+const [clicks, setClicks]= useState({
+    // initial state for left state 
+    left:0,
+    // initial state for right state
+    right:0
+  })
+
+  // Lets have the handler functions for each state
+  // For the left
+  const handleLeftClick=()=>{
+    const newClicks={
+      left:clicks.left+1,
+      right:clicks.right
+    }
+    // now, change the state
+    setClicks(newClicks)
+  }
+// For the right 
+const handleRightClick=()=>{
+    const newClicks={
+      left:clicks.left,
+      right:clicks.right+1
+    }
+    // now, change the state
+    setClicks(newClicks)
+  }
+   return (
+    <div>
+      {clicks.left}
+      <button onClick={handleLeftClick}>left</button>
+      <button onClick={handleRightClick}>right</button>
+      {clicks.right}
+    </div>
+  )
+}
+
+// When using the object on multiple piece of state, 
+// We deploy "OBJECT SPREAD" - to make access the properties in the object we want easily accessible
+
+// Lets change the handler functions - we used applied the object spread syntax !!
+const handleLeftClick = () => {
+  // The new object we want to be the state changed into
+  const newClicks = { 
+    // rest of the object
+    ...clicks, 
+    // We access only the property we want in an object, then do whatever we want with it
+    left: clicks.left + 1 
+  }
+  setClicks(newClicks)
+}
+
+const handleRightClick = () => {
+  const newClicks = { 
+    ...clicks, 
+    right: clicks.right + 1 
+  }
+  setClicks(newClicks)
+}
+
+// Another easier way to do this- is to even refactor the way we assign the object to a new variable in the event handler
+// We can immediately just change the state with out assigning the object to a new variable as shown above
+// First handler function for the left state
+const handleLeftClick = () =>
+  setClicks({ ...clicks, left: clicks.left + 1 })
+
+// Second handler function for the right state 
+const handleRightClick = () =>
+  setClicks({ ...clicks, right: clicks.right + 1 })
+
+// NB: ITS FORBIDDEN IN REACT TO MUTATE STATE DIRECTLY, SINCE IT CAN  RESULT IN UNEXPECTED SIDE EFFECTS
+// Changing state has to always be done by setting the state to a NEW OBJECT, not by changing a single variable/value in the object -> That would be MUTATING OF STATE
+
+// HANDLING ARRAYS 
+
+// 1. Example 1
+const App = () => {
+
+  // First state
+  const [left, setLeft] = useState(0)
+  // Second state
+  const [right, setRight] = useState(0)
+
+  // State whose initial state is an array, an empty array
+  const [allClicks, setAll] = useState([])
+
+// 1st handler function for the left click
+  const handleLeftClick = () => {
+    // Changes the state of the array state by appending 'L' to the array
+    setAll(allClicks.concat('L'))
+    // change the state of the LEFT state
+    setLeft(left + 1)
+  }
+
+// 2nd handler function for the Right click
+  const handleRightClick = () => {
+    // change the state of the array state by appending 'R' to the array
+    // The concat function doesnt mutate the array but rather returns a new copy of the array with the new item added to it
+    setAll(allClicks.concat('R'))
+    // change the state of the Right state
+    setRight(right + 1)
+  }
+
+  return (
+    <div>
+      {left}
+      <button onClick={handleLeftClick}>left</button>
+      <button onClick={handleRightClick}>right</button>
+      {right}
+{/* Now join all the elements in the array state and display them */}
+      <p>{allClicks.join(' ')}</p>
+    </div>
+  )
+}
+
+// NB: NEVER MUTATE STATE, it seems to work in some cases but it can lead to problems that are hard to debug 
+
+//🥷✅ UPDATE OF THE STATE IS ASYNCHRONOUS
+
+// 2 . Example 2
+const App = () => {
+  // left state
+  const [left, setLeft] = useState(0)
+  // right state
+  const [right, setRight] = useState(0)
+  // The array state
+  const [allClicks, setAll] = useState([])
+
+  // total state, tracks how many times the buttons are clicked, general for all the states
+  const [total, setTotal] = useState(0)
+
+  // 1st handler function for the left click
+  const handleLeftClick = () => {
+    // update the array variable
+    setAll(allClicks.concat('L'))
+    // update the left variable
+    setLeft(left + 1)
+//  update the total variable
+    setTotal(left + right)
+  }
+
+  // 2nd handler function for the Right click
+  const handleRightClick = () => {
+    // update the array variable 
+    setAll(allClicks.concat('R'))
+    // update the right variable
+    setRight(right + 1)
+// update the total variable
+    setTotal(left + right)
+  }
+
+  return (
+    <div>
+      {left}
+      <button onClick={handleLeftClick}>left</button>
+      <button onClick={handleRightClick}>right</button>
+      {right}
+      <p>{allClicks.join(' ')}</p>
+
+      <p>total {total}</p>
+    </div>
+  )
+}
+
+// In this code we will find that the state doesnt immediately update 
+// because The reason for this is that a state update in React happens asynchronously, 
+// i.e. not immediately but "at some point" before the component is rendered again.
+
+// Fix is Down below for the above code 
+  // ...
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L'))
+    // update the state manually to stop delays in asynchronous way but immediately
+    const updatedLeft = left + 1
+    // Then pass the updated state into the set function to change the state of  the variable you want to change
+    setLeft(updatedLeft)
+
+    // This total variable will immediately change and bring correct results
+    setTotal(updatedLeft + right) 
+  }
+ // ...
+
+// 🥷✅ CONDITIONAL RENDERING 
+// Lets modify our application so that the rendering of the clicking history is handled by a new History component
+// Just like conditions  in our programming
+const History = (props) => {
+  // if the length of our array is 0 then we will display that message to our users
+  if (props.allClicks.length === 0) {
+    return (
+      <div>
+        the app is used by pressing the buttons
+      </div>
+    )
+  }
+
+  // This is what will be returned instead 
+  return (
+    <div>
+      button press history: {props.allClicks.join(' ')}
+    </div>
+  )
+}
+
+const App = () => {
+  // ...
+
+  return (
+    <div>
+      {left}
+      <button onClick={handleLeftClick}>left</button>
+      <button onClick={handleRightClick}>right</button>
+      {right}
+  
+  {/* Our component to show history of clicks  */}
+      <History allClicks={allClicks} />
+    </div>
+  )
+}
+
+
+//🥷✅ OLD REACT   
+// -We used class  components instead of functional components 
+// Its still important to learn the class syntax because there are still billions of lines of legacy React 
+// code that we may need to end up maintaining one someday
+
+// Debugging React APPLICATIONS
+  // Most of the developer's time is spent on
+  // 1. debugging
+  // 2. Reading existing code  
+// Large time is spent on trying to figure out why something is broken or how something works
+// Good Practices and tools for debugging are extremely important  for this reason 
+
+// 🥷✅RULES OF WEB DEVELOPMENT 
+// 1.Keep the browser's developer console open all the times
+// 2. The console tab should always be open, unless there is a specific reason to view another tab 
+// 3. Keep your code and the web page open together at the same time 
+// 4. Dont write more code but rather find and fix the problem immediately 
+// 5. There has yet to be a moment in the history of coding where code fails to compile would miraculously start working after writing large amounts of additional code!! 
+// 6. Old school, print-based debugging is always a good idea
+
+// X) Using console isnt the only way of debugging applications
+// XI) Using the browser's debugger is also a good way to debug applications
+// <-----BY going to the console tab, its easier to inspect the current state of the variables ----->
+// Once the bug is discovered, we can  remove the debugger command  and then REFRESH THE PAGE !!
+
+//🥷✅ RULES of HOOKS 
+// 1.Dont use hooks or call them from inside of a loop, a conditional expression, or any place
+// that is not a function defining a component 
+// Its done to ensure that the hooks are always called in the same order,
+// if its not done in that case  the application will behave erratically
+
+// HOOKS may only be called from inside of a function body that defines a react component
+
+const App = () => {
+  // these are ok
+  const [age, setAge] = useState(0)
+  const [name, setName] = useState('Juha Tauriainen')
+
+  if ( age > 10 ) {
+    // this does not work!
+    // doesnt work because we are using a hook inside of a conditional expression
+    const [foobar, setFoobar] = useState(null)
+  }
+
+  for ( let i = 0; i < age; i++ ) {
+    // also this is not good
+    // doesnt work because we are using a hook inside of a loop
+    const [rightWay, setRightWay] = useState(false)
+  }
+
+  const notGood = () => {
+    // and this is also illegal
+    // doesnt work because we are using a hook inside of a function that doesnt return a react component 
+    const [x, setX] = useState(-1000)
+  }
+
+  return (
+    //...
+  )
+}
+
+//🥷✅ EVENT HANDLING REVISITED 
+// In order to make the button react to a click event, 
+// we have to add an event handler to it.
+// Event handlers must always be a function or a reference to a function
+// The button will not work if the event handler is set to a variable or any other type
+const App = () => {
+    // state to change a variable, using the hook -> useState 
+  const [value, setValue] = useState(10)
+
+  return (
+    <div>
+        {/* The value */}
+      {value}
+      {/* event handler, the button element facilitates it */}
+      <button>reset to zero</button>
+    </div>
+  )
+}
+
+// WHAT WILL NOT WORK 
+<button onClick={console.log('clicked the button')}>
+  button
+</button>
+
+// This will only display when the component is rendered by when its clicked the message wont be displayed on the console
+// even though it contains a function because the event handler here is defined as a function call , which means 
+// that the event handler is assigned the returned value from the function, which in the case of console.log is undefined.
+// The console.log function call gets executed when the component is rendered and for this reason, it gets printed once to the console.
+
+The following attempt is flawed as well:
+
+<button onClick={setValue(0)}>button</button>
+
+// REFERENCE TO THE ABOVE, we have assigned the event handler to a function call, which for this cause doesnt work 
+// When the component is rendered , the function setValue(0) get executed which in turn causes the component to be re-rendered->
+// Re-rendering in turn calls setValue(0) again, resulting in an INFINITE RECURSION
+
+THE BEST PRACTICES ON EVENT HANDLING 
+// Dont set function calls as event handlers-> We do set a function as the event handler not a function call
+
+// Here is a good way or recommended way to do it 
+<button onClick={() => console.log('clicked the button')}>
+  button
+</button>
+
+// So when the component gets rendered, no function gets called immediately and the  only
+// reference to the arrow function is set to the event handler, calling the function
+// happens only once the button is clicked
+
+// We can implement resetting the state in our application with this same technique:
+<button onClick={() => setValue(0)}>button</button>
+
+NB: DEFINING EVENT HANDLERS DIRECTLY IN THE ATTRIBUTE OF THE BUTTON IS NOT NECESSARILY 
+THE BEST POSSIBLE IDEA
+
+// YOU will see event handlers defined in a separate place, define a function that then gets assigned to the handleClick variable in the 
+// body of the  component function
+
+const App = () => {
+  // State for the value variable
+  const [value, setValue] = useState(10)
+
+  // handler function that we will later assign to the event handler  in the component's body
+  const handleClick = () =>
+    // This what will happen when the event handler is clicked or some other 
+    console.log('clicked the button')
+
+  return (
+    <div>
+      {value}
+      {/* Assign a function reference to the event handler  */}
+      <button onClick={handleClick}>button</button>
+    </div>
+  )
+}
+
+
+// 🥷✅ A FUNCTION THAT RETURNS A FUNCTION 
+// Another  WAY to define an event handler is to use a function that returns 
+// a function 
+// Its not that much need to use functions that return functions 
+
+const App = () => {
+  // state for the value variable 
+  const [value, setValue] = useState(10)
+
+  // This a handler function called hello 
+  const hello = () => {
+    // This function is inside the hello function 
+    const handler = () => console.log('hello world')
+    // This is what the hello function returns, which is a function
+    // so hello is a function that returns a function 
+    return handler
+  }
+
+  return (
+    <div>
+      {value}
+
+      {/* We use the hello function reference assigned to our event handler  */}
+      {/* We dont a sign it a function but a function call because the function call */}
+      {/* returns a function thats trigged */}
+      <button onClick={hello()}>button</button>
+    </div>
+  )
+}
+// MORE EXPLANATION 
+<button onClick={hello()}>button</button>
+
+// Earlier on we stated that an event handler may not be a call to a function and that it has to be a function or a reference to a function. 
+// Why then does a function call work in this case?
+
+<button onClick={() => console.log('hello world')}>
+  button
+</button>
+
+// It assigns the return value of hello( ) to the onClick attribute which  is a function, 
+// Since the hello function returns a function, the EVENT Handler is now a function 
+
+// SO WHATS THE POINT OF THIS CONCEPT OF USING FUNCTION THAT RETURNS FUNCTION
+BELOW HERE IS THE CODE TO EXPLAIN IT 👇
+
+const App = () => {
+  // state for the value variable
+  const [value, setValue] = useState(10)
+
+
+  // Functon that takes in an parameter of (who)
+  const hello = (who) => {
+    // A function inside a function called handler 
+    const handler = () => {
+      // it displays a message hello, the use the variable from its parent function
+      // or the function it is inside of 
+      console.log('hello', who)
+    }
+    // What the hello function returns , its a function inside it called handler 
+    return handler
+  }
+
+  return (
+    <div>
+      {value}
+{/* Using the function call, which returns a function */}
+{/* We call it with some arguments because thats how we defined it in the first place  */}
+      <button onClick={hello('world')}>button</button>
+      <button onClick={hello('react')}>button</button>
+      <button onClick={hello('function')}>button</button>
+    </div>
+  )
+}
+
+// AWESOME NOTE: NB:  FUNCTIONS RETURNING FUNCTIONS CAN BE UTILIZED IN DEFINING GENERIC 
+// FUNCTIONALITY THAT CAN BE CUSTOMIZED WITH PARAMETERS
+// FOR EXAMPLE (E.G)-> THe hello function that creates the event handlers can be thought of as a factory that produces customized event handlers meant for greeting users 
+
+SINCE OUR CURRENT DEFINITION IS SLIGHTLY VERBOSE, WE CAN REFACTOR IT 
+
+// THE VERBOSE FUNCTION 
+const hello = (who) => {
+  const handler = () => {
+    console.log('hello', who)
+  }
+
+  return handler
+}
+
+// THE REFACTORED ONE 
+const hello = (who) => {
+  // anyways it returns a function so we dont need to give it any name even
+  // let it return an anonymous function- but we make it return what we want
+  return () => {
+    console.log('hello', who)
+  }
+}
+
+
+// WE CAN USE THE SAME TRICK TO DEFINE EVENT HANDLERS THAT SET THE STATE OF THE COMPONENT
+// TO A GIVEN VALUE, EXAMPLE BELOW 👇
+const App = () => {
+  // STATE FOR THE VALUE VARIABLE 
+  const [value, setValue] = useState(10)
+  
+// HANDLER FUNCTION, takes in a paramer
+// IT RETURNS A FUNCTION
+  const setToValue = (newValue) => () => {
+    // consoles the value passed in as a parameter in the setToValue
+    console.log('value now', newValue)  // print the new value to console
+    // What this inner function does is to set the old value into a value 
+    // thats is passed on to it from the parent function 
+    setValue(newValue)
+  }
+  
+  return (
+    <div>
+      {value}
+
+{/* The 1st function call returns a function that changes the previous state into 1000 */}
+      <button onClick={setToValue(1000)}>thousand</button>
+      {/* The 2nd function call returns a function that resets the previous state to 0 */}
+      <button onClick={setToValue(0)}>reset</button>
+      {/* The 3rd function call returns a function that changes the previous state to be increment by 1 */}
+      <button onClick={setToValue(value + 1)}>increment</button>
+    </div>
+  )
+}
+
+NOTE BELOW 👇
+// Using functions that return functions is not required to achieve this functionality. 
+// Let's return the setToValue function which is responsible for updating state into a normal function:
+
+const App = () => {
+  const [value, setValue] = useState(10)
+
+  const setToValue = (newValue) => {
+    console.log('value now', newValue)
+    setValue(newValue)
+  }
+
+  return (
+    <div>
+      {value}
+      <button onClick={() => setToValue(1000)}>
+        thousand
+      </button>
+      <button onClick={() => setToValue(0)}>
+        reset
+      </button>
+      <button onClick={() => setToValue(value + 1)}>
+        increment
+      </button>
+    </div>
+  )
+}
+
+// NB: Choosing between the two presented ways of defining your event handlers is mostly a matter of taste.
+
+
+// 🥷✅ PASSING EVENT HANDLERS TO CHILD COMPONENTS-> FROM PARENT TO CHILD 
+//  EXAMPELE BELOW 👇
+
+// LET'S EXTRACT THE BUTTON INTO ITS OWN COMPONENT 
+
+// Button component or function, it takes in props, lets call it parameter
+const Button = (props) => (
+  // Lets destruct the onClick function from the props Object 
+  <button onClick={props.onClick}>
+    {/* lets destruct the text element from the props object  */}
+    {props.text}
+  </button>
+)
+
+// Now lets use the button component inside the APP COMPONENT WHICH IS THE PARENT COMPONENT
+// AND the button component will be the child so it will take its props fro m the parent or the APP COMPONENT 
+const App = (props) => {
+  // ...
+  return (
+    <div>
+      {value}
+{/*  */}
+      <Button onClick={() => setToValue(1000)} text="thousand" />
+      <Button onClick={() => setToValue(0)} text="reset" />
+      <Button onClick={() => setToValue(value + 1)} text="increment" />
+    </div>
+  )
+}
+
+// 🥷✅ DO NOT DEFINE COMPONENTS WITHIN COMPONENTS 
+
+// This is the right place to define a component
+// Define a component outside and different ✅
+const Button = (props) => (
+  <button onClick={props.onClick}>
+    {props.text}
+  </button>
+)
+
+const App = () => {
+  const [value, setValue] = useState(10)
+
+  const setToValue = newValue => {
+    console.log('value now', newValue)
+    setValue(newValue)
+  }
+
+  // Do not define components inside another component ❌
+
+  const Display = props => <div>{props.value}</div>
+
+  return (
+    <div>
+
+      <Display value={value} /> ❌
+      <Button onClick={() => setToValue(1000)} text="thousand" /> ✅
+      <Button onClick={() => setToValue(0)} text="reset" /> ✅
+      <Button onClick={() => setToValue(value + 1)} text="increment" /> ✅
+    </div>
+  )
+}
+
+ NOTE CAREFULLY (NB) 🙏✅// The application still appears to work, but don't implement components like this! 
+// Never define components inside of other components. 
+// The method provides no benefits and leads to many unpleasant problems.
+//  The biggest problems are because React treats a component defined inside of another component as a new component in every render. 
+// This makes it impossible for React to optimize the component.
+
+WEB PROGRAMMERS OATH 🙏✅🥷📚📕
+// Programming is HARD, thats why I WILL USE ALL THE POSSIBLE MEANS TO MAKE IT 
+// EASIER 
+✅ I will have my browser developer console open all the time 
+✅ I WILL PROGRESS WITH SMALL STEPS 
+✅ I WILL WRITE LOTS OF console.log statements to make sure I 
+UNDERSTAND HOW THE CODE BEHAVES AND TO HELP PINPOINTING problems 
+✅ IF my code doesnt  Work, I will not write more code. Instead I will 
+start deleting the code until it works or just return to a state when 
+everything was still working 
+✅ When I ask for help in the course DISCORD channel or elsewhere I formulate 
+my questions properly 
+
+
+👨🏿‍💻💻🖥️ UTILIZATION OF LARGE LANGUAGE MODELS 
+such as CHATGPT, CLAUDE,DEEPSEEK AND GITHUB COPILOT are useful in software development 
+
+✅ You can easily use COPILOT which integrates seamlessly with VS CODE thanks to the plugin 
+
+Copilot is far better that other language models because other language 
+models HALLUCINATE(HALLUCINATION), THEY GENERATE COMPLETELY CONVINCING LOOKING ANSWERS WHICH 
+HOWEVER ARE COMPLETELY WRONG 
+-✅ The code seems to work, but it contains more difficult to detect bugs else.g security vulnerabilites 
