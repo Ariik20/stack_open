@@ -61,6 +61,21 @@ app.get('/api/notes', (request,response)=>{
     response.json(notes)
 })
 
+//fetching a single resource -
+app.get('/api/notes/:id', (request,response)=>{
+  const id=request.params.id 
+  const note =notes.find(note => note.id ===id)
+  if (note){response.json(note)}
+  else{response.status(404).end()}
+})
+
+//deleting a resource - 
+app.delete('api/notes/:id', (request,response)=>{
+  const id=request.params.id
+  notes = notes.filter(note=> note.id!=id)
+  response.status(204).end()
+})
+
 const PORT=3001
 app.listen(PORT)
 console.log(`Server runnning on port ${PORT}`)
@@ -81,3 +96,4 @@ console.log(`Server runnning on port ${PORT}`)
 // notes/10	    DELETE	removes the identified resource
 // notes/10	    PUT	    replaces the entire identified resource with the request data
 // notes/10	    PATCH	replaces a part of the identified resource with the request data
+
