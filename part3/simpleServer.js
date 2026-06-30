@@ -32,6 +32,10 @@
 // With express now - 
 const express=require('express')
 const app=express()
+//receiving data or adding a resource -
+// to access the data easily, we need the help of the Express JSON-parser that 
+// we can use with the command app.use(express.json())
+app.use(express.json())
 let notes = [
   {
     id: "1",
@@ -74,6 +78,15 @@ app.delete('api/notes/:id', (request,response)=>{
   const id=request.params.id
   notes = notes.filter(note=> note.id!=id)
   response.status(204).end()
+})
+
+// creating a new resource -
+app.post('/api/notes', (request,response)=>{
+  const maxId=notes.length >0? Math.max(...notes.map(n =>Number(n.id))) : 0
+  const note=request.body
+  note.id =String(maxId +1)
+  notes = notes.concat(note)
+  response.json(note) 
 })
 
 const PORT=3001

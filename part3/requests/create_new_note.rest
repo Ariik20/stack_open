@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/notes
+Content-Type: application/json
+
+{
+  "content": "This is a new note",
+  "important": true
+}
+
+// You need to add an empty line between the top row and the row
+// specifying the body or resource being sent to the server.  
