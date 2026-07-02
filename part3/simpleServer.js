@@ -32,10 +32,7 @@
 // With express now - 
 const express=require('express')
 const app=express()
-//receiving data or adding a resource -
-// to access the data easily, we need the help of the Express JSON-parser that 
-// we can use with the command app.use(express.json())
-app.use(express.json())
+
 let notes = [
   {
     id: "1",
@@ -53,7 +50,26 @@ let notes = [
     important: true
   }
 ]
+//MIDDLEWARE 
+// Middleware are functions that can be used for handling 
+// request and response objects 
+// - You can use several middleware at the same time 
+// when you have more than one, they are executed one by one in the order that they will were listed in the application code. 
 
+// Middleware that prints information about every request that is sent to the server 
+// Middleware is a function that receives three parameters:
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+//receiving data or adding a resource -
+// to access the data easily, we need the help of the Express JSON-parser that 
+// we can use with the command app.use(express.json())
+app.use(express.json())
+app.use(requestLogger)
 // event handler used to handle HTTP GET requests made to the app's root 
 app.get('/', (request,response)=>{
     response.send('<h1>Hello World</h1>')
@@ -80,11 +96,24 @@ app.delete('api/notes/:id', (request,response)=>{
   response.status(204).end()
 })
 
+const generateId=()=>{
+  const maxId=notes.length >0? Math.max(...notes.map(n =>Number(n.id))) : 0
+  return String(maxId +1)
+}
 // creating a new resource -
 app.post('/api/notes', (request,response)=>{
-  const maxId=notes.length >0? Math.max(...notes.map(n =>Number(n.id))) : 0
-  const note=request.body
-  note.id =String(maxId +1)
+  const body=request.body
+  if (!body.content){
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+  // creating the new note and its properties -
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    id: generateId(),
+  }
   notes = notes.concat(note)
   response.json(note) 
 })
@@ -110,3 +139,19 @@ console.log(`Server runnning on port ${PORT}`)
 // notes/10	    PUT	    replaces the entire identified resource with the request data
 // notes/10	    PATCH	replaces a part of the identified resource with the request data
 
+// Strong recommendation: When you are working on backend code, always keep an eye on what's going on in the terminal that is running your application.
+
+// HTTP request Types 
+// Two request types  
+// -safety (request must not cause any side effects on the server
+// like the state of the DB must not change as a result of the request 
+// and the response must only return data that already exists on the server)
+// All HTTP requests except POST should be idempotent
+// -idempotency
+
+//middleware without routes - if no routehandler needs the middleware.
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
