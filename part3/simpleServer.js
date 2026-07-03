@@ -155,3 +155,25 @@ const unknownEndpoint = (request, response) => {
 }
 
 app.use(unknownEndpoint)
+
+// PART 3 (B)
+// Deploying an app to the internet-
+
+// 1. Same Origin policy and CORS 
+// A URL's origin defined by combination of protocol  (AKA Scheme), hostname and port  
+// The same-origin policy is a security mechanism implemented by browsers inorder to prevent 
+// session hijacking among other security vulnerabilities.  
+// Legitimize cross-origin requests (URLS that dont share the same origin) we use CORS (Cross Origin Resource Sharing )
+//-CORS allows restricted resources on a web page to be requested from another domain outside the domain from which the first resource was served ..
+   
+// BEST EXAMPLE TO UNDERSTAND CORS -
+    // The problem is that, by default, the JavaScript code of an application that runs in a browser can only communicate with a server in the same origin. Because our server is in localhost port 3001, 
+    // while our frontend is in localhost port 5173, they do not have the same origin.
+    //We can allow requests from other origins by using NODE'S cors middleware. 
+
+//APPLICATION TO THE INTERNET -
+// FRONTEND PRODUCTION BUILD --there is development mode , when the application is deployed, we must create a production build or  
+// a version of the application that is optimized for production.
+// npm run build -creates production build for applications created in vite 
+// - The dist folde will be created where all the code from different files will be minified into 3 files , html, css and js files,
+// SERVING STATIC FILES FROM THE BACKEND 
