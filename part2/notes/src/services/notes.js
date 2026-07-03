@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // this address contains all the notes data or object or resources 
-const baseUrl='http://localhost:3000/notes'
+const baseUrl='http://localhost:3001/notes'
 
 const getAll =()=>{
     const request= axios.get(baseUrl)

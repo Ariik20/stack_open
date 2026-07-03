@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import Note from './components/Note'
 import noteService from "./services/notes"
 import Notification from './components/Notification'
+import Footer from './footer'
 const App = () => {
-  const [notes, setNotes] = useState(null)
+  const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
-  const [errorMsg,setErrorMsg]=useState('some error happened....')
+  const [errorMsg,setErrorMsg]=useState(null)
 
   //fetching the data using the Effect Hook
   useEffect(()=>{
@@ -16,8 +17,6 @@ noteService.getAll()
         setNotes(fetchedNotes)
     )
   },[])
-console.log('render', notes.length, 'notes')
-
 // function that handles the creation of a new note
   const addNote = (event) => {
     event.preventDefault()
@@ -84,6 +83,7 @@ const notesToShow = showAll
         <input value={newNote} onChange={handleNoteChange} />
         <button type="submit">save</button>
       </form>
+      <Footer />
     </div>
   )
 }
