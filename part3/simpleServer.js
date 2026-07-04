@@ -177,3 +177,6 @@ app.use(unknownEndpoint)
 // npm run build -creates production build for applications created in vite 
 // - The dist folde will be created where all the code from different files will be minified into 3 files , html, css and js files,
 // SERVING STATIC FILES FROM THE BACKEND 
+
+
+// ADDING THE DATABASE (MONGODB) -
